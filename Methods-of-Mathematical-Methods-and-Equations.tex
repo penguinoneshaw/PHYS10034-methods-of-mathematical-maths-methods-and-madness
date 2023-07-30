@@ -1,0 +1,899 @@
+\documentclass[a4paper,12pt,parskip=full,BCOR=1cm]{scrreprt}
+\usepackage{graphicx}
+\usepackage[arrowdel]{physics}
+\usepackage[hidelinks]{hyperref}
+\usepackage{nicefrac}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{relsize}
+\usepackage{booktabs}
+\KOMAoption{chapterprefix}{true}
+
+\renewcommand*\raggedchapter{\centering}
+\RedeclareSectionCommand[beforeskip=0pt,afterskip=2\baselineskip]{chapter}
+\setkomafont{chapterprefix}{\normalsize\mdseries}
+
+\renewcommand*{\chapterformat}{%
+  \chapappifchapterprefix{\nobreakspace}\thechapter\autodot%
+  \IfUsePrefixLine{%
+    \par\nobreak\vspace{-\parskip}\vspace{-.6\baselineskip}%
+    \rule{0.9\textwidth}{.2pt}%
+  }{}%
+}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\integerpart{\[}{\]}
+\usepackage{mathrsfs}
+\newcommand{\fourier}[1]{\ensuremath{\mathlarger{\mathcal{F}}\!\!\left[#1 \right]}}
+\newcommand{\inversefourier}[1]{\ensuremath{\mathlarger{\mathcal{F}^{-1}}\!\!\left[#1 \right]}}
+\newcommand{\laplace}[1]{\ensuremath{\mathlarger{L}\!\!\left[#1 \right]}}
+\DeclareMathOperator{\erfc}{erfc}
+
+\setkomafont{disposition}{\rmfamily\scshape\bfseries}
+
+
+\usepackage[largesc]{newpxtext}
+\usepackage{newpxmath}
+\setkomafont{descriptionlabel}{\rmfamily\bfseries}
+\linespread{1.05}
+\setcounter{tocdepth}{1}
+\usepackage[tikz]{mdframed}
+\newmdenv[frametitle=Example,roundcorner=5pt]{example}
+\newmdenv[frametitle=Note,roundcorner=5pt]{note}
+
+\title{Methods of Mathematical Physics}
+\subtitle{Methods and Madness}
+\author{James Shaw}
+\date{Winter 2017}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\vec}{\underline}
+\setcounter{tocdepth}{0}
+
+\begin{document}
+\input{titlepage}
+\tableofcontents
+\part{The Standard Book of Maths, Grade IV}
+\chapter{Infinite Series And Asymptotic Expansions}
+\section{Infinite Series}
+An infinite series $\sum_{n=0}^\infty a_n$ converges to some $S$ if $$\forall \epsilon > 0, \exists N_0 \quad\textrm{such that}\quad \abs{S - \sum_{n=0}^N a_n} < \epsilon \quad\forall N< N_0$$ and is absolutely convergent if $\sum_{n=0}^\infty \abs{a_n}$ is convergent.
+
+\begin{example}
+ The geometric series is absolutely convergent to $$\sum_{n=0}^\infty x^n = \frac{1}{1-x}$$
+\end{example}
+If we want to prove (absolute) convergence, we can use
+\begin{equation*}
+ \textrm{If}\quad\lim_{n\rightarrow \infty}\abs{\frac{a_{n+1}}{a_n}} < 1\quad \textrm{then the series}\quad\sum_{n=0}^\infty a_n \quad \textrm{converges absolutely}.
+\end{equation*}
+
+We can also use the root test ($\lim_{n\rightarrow\infty} (\abs{a_n})^{\nicefrac{1}{n}}$) or comparison with a sensible integral where if $f(x)$ is monotonically decreasing, it satisfies
+$$ \sum_{n=b}^\infty f(n) \leq \int_{b-1}^\infty f(x)\dd{x} $$ if it is convergent.
+An equivalent definition for the integral test works for testing divergence.
+
+\begin{example}
+ Some useful ready-made series are
+ \begin{align*}
+  \frac{1-x^N}{1-x} & = \sum_{n=0}^N x^n                                    & \frac{1}{1-x} & = \sum_{n=0}^\infty x^n,\quad \abs{x} < 1                         \\
+  \exp(x)           & = \sum_{n=0}^{\infty} \frac{x^n}{n!}                  & \log(1+x)     & = \sum_{n=0}^{\infty}\frac{(-1)^{n+1}}{n}x^n, \quad -1 < x \leq 1 \\
+  \sin(x)           & = \sum_{n=0}^{\infty}\frac{(-1)^{n}}{(2n+1)!}x^{2n+1} & \cos(x)       & = \sum_{n=0}^{\infty}\frac{(-1)^{n}}{(2n)!}x^{2n}
+ \end{align*}
+\end{example}
+
+\section{Asymptotic Series}
+We define asymptotic expansion as
+$$ S_n= \sum_{s=0}^n a_s z^{-s}$$ for $z \rightarrow \infty$ if the remainder satisfies
+$$ \lim_{z\rightarrow\infty} z^n \qty[f(z) - \sum_{s=0}^n a_s z^{-s}] = 0.$$
+This is written formally as $f(z) \sim S_n(z)$ (often abused horrifically).
+
+A lot of the time, asymptotic expansions appear due to swapping integrals and sums in places where this is not 100\% allowed --- if the sum is divergent but the integral convergent, for example.
+The basic point here is to find some value of $n$ which minimises the remainder for a value of $z$.
+A given series can be the asymptotic series for several different functions, but a function has a unique asymptotic series.
+
+\chapter{Complex Analysis}
+\section{Basics}
+Complex differentiability of a function in the form $f(z) = u(z) + iv(z)$ where $z=x+iy$ is defined by the Cauchy-Riemann conditions $$ \pdv{u}{x}= \pdv{v}{y} \quad \textrm{and} \quad \pdv{u}{y} = - \pdv{v}{x} $$ and analyticity on a domain is defined as $f(x)$ is analytic if it is differentiable on the domain.
+
+If a function is analytic in a region entirely enclosed by a contour, we find that
+\begin{equation*}
+ \oint_C f(z) \dd{z} = 0
+\end{equation*}
+which allows us to deform a contour in any way we wish so long as it doesn't move out of the analytic domain to do so.
+This also leads us to the Cauchy Integral Formula
+\begin{equation*}
+ f(z) = \frac{1}{2\pi i}\oint_C \frac{f(\zeta)}{\zeta-z} \dd{\zeta}.
+\end{equation*}
+Differentiating this $n$ times with respect to $z$ gives the link between complex differentiation and integration $$ \dv[n]{f}{z} = \frac{n!}{2\pi i} \oint \frac{f(\zeta)}{(\zeta - z)^{n+1}} \dd{\zeta}$$ thus if a function is differentiable in a region, it is infinitely differentiable.
+
+\section{Series Expansions}
+Any complex-valued function, in its analytic region, can be written as a pure Taylor series.
+
+By adding terms in $(z-z_0)^{-n}$, we add areas of non-analyticity to the function (`singularities') of which there are three types:
+\begin{description}
+ \item [Removable Singularity] A singularity which can be defined out piecewise sensibly such that the function is then analytic
+ \item [Isolated Singularity (Pole)] A singularity of finite order which is unremovable.
+Simple poles have 1st order Laurent expansions (only a $\frac{1}{z-z_0}$ term).
+ \item [Essential singularity] A singularity of infinite order in its Laurent expansion (e.g.~$e^{\frac{1}{x}}=\sum_0^\infty \frac{1}{n!x^n}$)
+\end{description}
+
+The coefficient $a_{-1}$ which blows up at $z=z_0$ is called the residue at $z_0$.
+This leads us to the residue theorem, which states
+\begin{equation*}
+ \oint_{\partial C} f(z) \dd{z} = 2\pi i \sum_{i}\Res(f,a_i)
+\end{equation*}
+for all $a_i\in f(C)$ for $\partial C$ a closed simply connected anticlockwise contour.
+
+Finding residues is a bit of a nightmare.
+Fundamentally, you're trying to get the 1st term in the Laurent expansion in a partial fractions form.
+
+When doing an integral if you can close it in the complex plane, it's often easier to calculate thanks to the residue theorem.
+We can then often remove the extra integrals with bounding.
+
+A useful lemma for this is Jordan's Lemma.
+If $I_n$ is an integral of the form $$I_n = \int _C f(z)e^{ikz} \dd{z}$$ for $k\in \mathbb{R^+}$ an $C$ a semicircular contour in the upper plane, then provided $\lim_{\abs{z} \rightarrow \infty}f(z) = 0$ and $0\leq\arg(z)\leq\pi$, then Jordan's Lemma states that $$\lim_{R\rightarrow \infty}I_R = 0.$$
+
+\section{Multivalued Functions (and clever contour choices)}
+Anywhere where there's an $\arg$, there's a choice of where you break for the periodic repeat in order to make your multivalued map injective.
+The `principle' branch is the choice of $\theta = \pm \pi$.
+Introducing a branch cut separates your complex plane into Riemann sheets.
+
+Complex powers cause branch cuts.
+A complex power is defined as
+\begin{align*}
+ z^p & = \exp(p\log(z))                          \\
+     & = \exp(p\log{Re^{i\theta}})               \\
+     & = \exp(p\log{R} + p\log{e^{i\theta}})     \\
+     & = R^p\{pi\theta + pn\pi|n\in\mathbb{N}\}.
+\end{align*}
+This gives us a set, which can either be finite, countably infinite or uncountably infinite (depending on the $p$).
+
+The introduction of branch cuts also means that contours we choose start to become more complicated.
+Such contours as the `keyhole' and `dogbone' contours are used in situations where we need to navigate around the branch cut.
+
+The choice of contour when extending an integral into the complex plane is entirely arbitrary.
+We will usually choose it to ensure convergence of the integral (if the integral is of the form $\int_C e^{ikx}f(x))\dd{x}$ we choose a contour in the upper half-plane, such that the integral is always negative, and we can use Jordan's lemma).
+
+\section{Analytic Continuation}
+The Identity Theorem states that if two functions $f_1(z)$ and $f_2(z)$ are analytic in a region $R$, then if $f_1(W)=f_2(W)$ where $W$ is a simply connected subregion or curve in $R$, then $f_1(z)=f_2(z)$ everywhere in $R$.
+
+Using this theorem, we can take an expansion, find a closed form for it, expand it about a different point and repeat.
+Often, we'll be able to show that a function's closed form is analytic for all of the plane except for its poles.
+
+\chapter{The Gamma Function}
+\section{The Factorial to the Gamma}
+We define the factorial as usual
+$$n! = n(n-1)\cdots1 \quad \textrm{with}\quad 0! = 1.$$
+We can derive (using integration by parts) the integral representation of the factorial $$I(n) = \int_0^\infty e^{-t}t^n\dd{t}\quad n\in\mathbb{N}$$ which through analytic continuation we extend $n$ to a complex number $z\in\mathbb{C}$ where $\Re(Z)>-1$ which gives us $$\Gamma (z+1) = \int_0^\infty e^{-t}t^z\dd{t}.$$
+
+\section{More Clever Contours}
+In order to extend $\Gamma(z)$ even further into the complex plane, we use the Hankel contour, which is a three part contour around the positive branch cut, \begin{align*}
+ C   & = C_1 + C_2 + C_3                                                                                                                                                        \\
+ C_1 & : \lim_{\varepsilon\rightarrow0}\int_{\infty + i\varepsilon}^{0+ i\varepsilon}\dd{t}                                                                                     \\
+ C_2 & :\lim_{\varepsilon\rightarrow0}\int^{e^{2\pi i}\infty - i\varepsilon}_{e^{2\pi i}-i\varepsilon}\dd{t} \intertext{remembering that there's a branch cut in the way, and }
+ C_3 & : \lim_{\delta=0} \int_0^{2\pi}\dd{\theta} \text{ where } t = \delta e^{i\theta}.
+\end{align*}
+When this is evaluated, this gives us the continuation to almost all $z$ of $$2\sin(\pi z)\Gamma(z+1)=\int_C e^{-t}(-t)^z \dd{t}.$$ The branch that arises due to the power in the exponential changes in nature depending on the $z$.
+If $z$ is a positive integer, we recover the factorial again.
+
+\section{The Beta Function}
+By considering the product of two $\Gamma$ functions, we derive the $B$ function
+$$ B(r,s) = \frac{\Gamma(r)\Gamma(s)}{\Gamma(r+s)}= \int_0^1 t^{r-1}(1-t)^{s-1}\dd{t}$$ In the interests of convergence (this is a common theme) we require that $\Re(r) > 0$ and $\Re(s) > 0$.
+
+Now if we consider
+\begin{align*}
+ \Gamma(z)\Gamma(1-z) & = \Gamma(1)B(1,1-z)               \\
+                      & = \int_0^1 t^{z-1}(1-t)^{z}\dd{t} \\
+                      & =\frac{\pi}{\sin\pi z},
+\end{align*}
+this is Euler's reflection formula.
+This gives us the Beta function analytic continuation to all $z \in \mathbb{C}-\mathbb{N}$.
+This also gives us $\Gamma(\frac{1}{2})=\sqrt\pi$.
+
+\chapter{Approximating Difficult Integrals with Solvable Gaussians}
+\section{Laplace's Method}
+Laplace's Method is contingent upon the concept that an integral in the form $$I(x) = \int_a^b f(t) e^{x\phi(t)}\dd{t}$$ where $f(t)$ is slowly varying and $\phi$ is real, analytic and has a maximum at $t=c$ is dominated by the region around the maximum.
+We can therefore approximate it and not pick up too much error, and have it actually integrate.
+
+This is a three (and an integral) stage process.
+\begin{enumerate}
+ \item Identify the maximum $c$ of $\phi(t)$.
+If it has many maxima, use the largest.
+ \item Expand $f(t)$ and $\phi(t)$ about $t=c$, which gives\begin{align*}
+        f(t)    & \approx f(c) \quad \text{since it is slowly varying}                   \\
+        \phi(t) & = \phi(c) + \frac{(t-c)^2}{2!}\phi^{(2)}(c) + \mathcal{O}\qty((t-c)^3)
+       \end{align*}
+       where we note that by design $\phi^{\prime}(c) = 0$ and $\phi^{(2)}(c)\leq 0$.
+ \item Expand the integration range from $[a,b]$ to $(-\infty, \infty)$, as the error in the integration is exponentially suppressed proportional to the complementary error function.
+\end{enumerate}
+
+In practice, to first order this gives the integral
+\begin{align*}
+ I(x) & = f(c) e^{x\phi(c)}\int_\mathbb{R} e^{(t-c)^2 \frac{x}{2}\phi^{(2)}(c)}\dd{t}          \\
+      & = f(c) e^{x\phi(c)}\int_\mathbb{R} e^{-u^2 \frac{x}{2}\abs{\phi^{(2)}(c)}}\dd{u}       \\
+      & =f(c) e^{x\phi(c)} \sqrt\frac{2\pi}{\abs{\phi^{(2)}(c)}}\frac{1}{x^{\nicefrac{1}{2}}}.
+\end{align*}
+This is the first order of an asymptotic expansion
+$$I(x) \sim e^{x\phi(c)} \sqrt\frac{2\pi}{\abs{\phi^{(2)}(c)}}\frac{1}{x^{\nicefrac{1}{2}}} \qty[f(c) + \frac{A}{x} + \frac{B}{x^2} + \cdots].$$
+\section{Stationary Phase Approximation}
+The stationary phase approximation is very similar to Laplace's method, just for integrals of the form $$I(x) = \int_a^b f(t) e^{ix\psi(t)}\dd{t}$$ with all of the same assumptions, and large positive $x$.
+
+The key point here is that the $e^{ix\psi(t)}$ will be strongly oscillatory for large $x$, except around where there is a stationary point in $\psi(t)$.
+This allows us to expand around each of the extrema, sum the contributions and get a reasonably accurate approximation to the integral, as away from the extrema the contributions will cancel.
+
+The general first order solution to the integral is
+\begin{align*}
+ I(x)\sim f(c)e^{ix\psi(c)\pm i\nicefrac{\pi}{4}}\sqrt\frac{2\pi}{x\abs{\psi^{(2)}(c)}}
+\end{align*}
+
+\section{The Saddle-Point Approximation}
+The next obvious question to ask is ``How do I do all of that, but with a general complex integral?''.
+This leads to the Saddle-Point Approximation.
+
+For an integral of the form
+\begin{align*}
+ I(N) & = \int_C g(z)e^{Nf(z)}\dd{z} \text{ for }N\gg 0
+\end{align*}
+where $f(z)$ is a generic analytic (in the domain) complex valued-function.
+We combine the two previous methods: we look for points where $\Re(f(z))$ is maximised and $\Im(f(z))$ is stationary.
+Thus, we require $f^\prime(z)=0$.
+
+\begin{note}
+ Stationary points of holomorphic functions are always saddle-points.
+This is a consequence of the definition of holomorphicity (with the Cauchy-Riemann equation).
+\end{note}
+
+Once we've found the saddle points, we continue in the same vein as the Laplace Method, which the approximations
+\begin{align*}
+ g(z) & \approx g(z_i) & f(z) & \approx f(z_i) + \frac{1}{2}f^{\prime\prime}(z_i)(z-z_i)^2
+\end{align*}
+which makes the integrals
+$$ I(x) \approx \sum_{z_i} g(z_i)e^{Nf(z_i)} \int_C \exp(\frac{N}{2}f^{\prime\prime}(z_i)(z-z_i)^2)\dd{z}.$$
+Now setting $z-z_i=re^{i\phi_i}$ and $f^{\prime\prime}(z_i)=\abs{f^{\prime\prime}(z_i)}e^{i\theta}$ gives us a convergence condition, since
+$$I(x)\approx \sum_{z_i} g(z_i)e^{Nf(z_i)} \int_{-\infty}^\infty \exp(\frac{N}{2}\abs{f^{\prime\prime}(z_i)}e^{i\theta}r^2e^{2i\phi_i})e^{i\phi_i}\dd{r}$$ givens us that we want
+\begin{align*}
+ e^{2 i\phi_i}e^{i\theta}        & = -1                     \\
+ \implies \quad 2\phi_i + \theta & = \pi                    \\
+ \implies \quad \phi_i           & = \frac{\pi - \theta}{2}
+\end{align*} in order to use our nice gaussian integrals.
+
+We need to make a careful choice of contour, such that it goes through each of the saddle points along the `path of steepest descent' in a `positive sense'.
+If this sounds vague, it's not being falsely advertised.
+
+\chapter{Stuff that Dirac didn't want named after him}
+An applied impulse can be modelled as a sudden spike of applied force ($mv = \int_{t-\epsilon}^{t+\epsilon}F(\tau)\dd{\tau}$), which in the $\epsilon\rightarrow 0$ limit gives us a \emph{Dirac delta distribution} such that $$ F(t) = mv\delta(t-t_0).$$
+
+There are many definitions of this object, all leading from approximations of the Definition, $$ \int_{-\infty}^{\infty} \delta(x) \dd{x} = 1 .$$
+We also have the top hat function
+\begin{equation*}
+ \delta_n^{(1)} (x) \equiv \begin{cases}
+  0           & x<-\frac{1}{n}                       \\
+  \frac{n}{2} & -\frac{1}{n} \leq x \leq \frac{1}{n} \\
+  0           & \frac{1}{n} < x
+ \end{cases}
+\end{equation*}
+which satisfies the Definition,  but isn't terribly useful as it isn't analytic.
+However, it does take infinite integrals and make them finite (but not necessarily obviously bounded) which is nice.
+
+Alternatively, defining in terms of a Gaussian gives
+$$\delta(x) \equiv \lim_{n\rightarrow\infty}\int_\mathbb{R} \frac{n}{\sqrt{\pi}}e^{-n^2x^2}\dd{x}.$$
+
+There are more, but the point is that they don't really exist, since the limits don't really exist.
+
+\section[Heaviside Thetas out of the Dirac delta]{Heaviside $\Theta$s out of the Dirac-$\delta$}
+The Heaviside $\Theta$ function is defined as
+\begin{equation*}
+ \Theta(t) \equiv \begin{cases}
+  1           & t>0                          \\
+  \frac{1}{2} & t = 0 \text{ conventionally} \\
+  0           & t<0
+ \end{cases}
+\end{equation*}
+which for non-zero $t$ clearly gives us
+$$\int_{-\infty}^t \delta(u)\dd{u} = \Theta(t)$$ which (by the fundamental theorem of calculus) immediately gives us $$ \delta(u) = \Theta^\prime (t).$$ You can also do this with integration by parts on $\int_{-\infty}^{\infty}f(t)\Theta^\prime(t)\dd{t}$.
+
+We have an integral representation of the $\Theta$ function,
+\begin{alignat*}{2}
+ \Theta(x) & = \frac{1}{2\pi i} \int_{-\infty - i\gamma}^{\infty - i \gamma}\frac{e^{ikx}}{k}\dd{k} & \quad\gamma & > 0\intertext{which we can use the relationship derived previously to gain}
+ \delta(x) & = \frac{1}{2\pi} \int_{-\infty - i\gamma}^{\infty - i \gamma} e^{ikx} \dd{k}
+\end{alignat*}
+where the contours are chosen to avoid the poles in the $\Theta$ representation, but there are no poles in the $\delta$ so we can set $\gamma=0$.
+The $\delta(x)$ representation is still divergent, so needs another integral in $x$ to make sense.
+
+\part{Ordinary Differential Equations and Where to Find Them}
+\chapter{Linear Ordinary Differential Equations}
+An $n$\textsuperscript{th} order ODE is a relation
+$$ y^{(n)}(x) = F(x, y(x), y^{(1)}(x), \ldots, y^{(n-1)}(x))$$
+where $y^{(i)}(x)=\dv[i]{y}{x}$.
+If it is linear in $y$ and its derivatives, then the ODE is said to be linear.
+An $n$\textsuperscript{th} order linear ordinary differential equation will have $n$ linearly independent solutions and $n$ independent constants of integration (which can be zero).
+$$ y(x) = \sum_{j=1}^{n} C_j y_j(x).$$
+
+A general $n$\textsuperscript{th} order ODE can be written as a system of first order equations if we set
+\begin{align*}
+ y_k             & = \dv[k]{y}{x}      & k & = 0 \,\ldots\, n-1 \\
+ \dv{y_k}{x}     & = y_{k+1}(x)        & k & = 0 \,\ldots\, n-2 \\
+ \dv{y_{n-1}}{x} & = F(x, \{y_k(x)\}).
+\end{align*}
+We can also write them formally as
+\begin{align*}
+ \mathcal{L}y(x) & = f(x)
+\end{align*}
+where
+\begin{align*}
+ \mathcal{L} & = \dv[n]{x} + \sum_{k=0}^{n-1} p_{k} \dv[k]{x}.
+\end{align*}
+If $f(x)=0$ then the ODE is homogeneous.
+
+\section{Linear (in)dependence}
+Linear independence is defined as when there is no non-trivial ($\alpha_i \neq 0 \,\forall \alpha_i$) solution for $$\alpha_jy_j(x) = 0$$ (using the Einstein Summation Convention).
+We can also differentiate this $n-1$ times to provide constraints for the equations in all of the variables of $F$, to get
+$$\alpha_j\dv[i]{y_j}{x} = 0.$$
+
+This is $n$ linear equations in $n$ variables, so we build a Wronskian
+\begin{align*}
+ W(x) & = W[y_1, y_2, \ldots, y_n] \\
+      & \equiv \det
+ \begin{vmatrix}
+  y_1         & y_2         & \cdots & y_n         \\
+  y_1^{(1)}   & y^{(1)}_2   & \cdots & y^{(1)}_n   \\
+  \vdots      & \vdots      & \ddots & \vdots      \\
+  y_1^{(n-1)} & y^{(n-1)}_2 & \cdots & y^{(n-1)}_n
+ \end{vmatrix}.
+\end{align*} If the Wronskian is non-vanishing for any $x$ in the domain, this system can be inverted (with respect to $W_{ij}\alpha_i = 0$) to get the independence condition.
+
+The Wronskian of $W(x)$ of any $n$ solutions of the LODE satisfies
+$$W^\prime (x) = -p_{n-1}(x)W(x)$$
+which has a solution up to a multiplicative constant of
+$$W(x) = \exp[-\int^x p_{n-1}(t) \dd{t}].$$ This is Abel's formula, and comes in handy.
+
+\section{Second-Order Linear Homogeneous Ordinary Differential Equations}
+With second order ODEs, we can do clever things with Wronsky's determinant.
+We notice that if we do
+$$\dv{x}(\frac{y_2}{y_1}) = \frac{y_1 y_2^\prime - y_1^\prime y_2}{y_1^2} = \frac{W}{y_1^2}$$ which is very useful \emph{indeed}.
+Bringing back Abel's formula, we get an integral equation for the second linearly independent solution if we have one which is
+\begin{align*}
+ y_2 & = y_1 \int_{x_0}^x \frac{W(t)}{y_1^2(t)} \dd{t}                                            \\
+     & =  y_1 \int_{x_0}^x \frac{1}{y_1^2(t)}\exp[-\int^t p_{n-1}(t^\prime) \dd{t^\prime}] \dd{t}
+\end{align*}
+where $x_0$ is a constant, up to a multiplicative constant, which is dealt with through the boundary conditions.
+
+\chapter{Messers Sturm and Liouville's Form and Mr Green's Functions}
+For a second-order linear ODE, we can always write it in the form
+$$\mathcal{L}(x)y(x) = f(x)$$
+where
+$$\mathcal{L}(x) = \dv{x}\qty[p(x)\dv{x}] + q(x).$$
+We identify $p(x)$ and $q(x)$ by manipulating
+$$y^{\prime\prime} + p_1 y^\prime + p_0 y = g(x)$$
+into
+$$\qty[\dv{x}(\frac{1}{W(x)}\dv{x}) + \frac{p_0(x)}{W(x)}]y(x) = \frac{g(x)}{W(x)}.$$
+This is the Sturm-Liouville form.
+
+\section{Boundary Conditions and Colourful Functions}
+Generally, differential equations are defined on a range $a \leq x \leq b$ and boundary conditions given in the form
+\begin{align*}
+ \alpha y(a) + \beta y(a) & = 0 & \gamma y(b) + \delta y(b) & = 0.
+\end{align*}
+These are homogeneous ($=0$) and unmixed (each boundary is defined in only equation).
+
+We assume a particular solution of the form
+$$ y_p(x) = \int_a^b G(x,x^\prime)f(x^\prime)\dd{x^\prime}$$ where $G(x,x^\prime)$ is a Green's Function.
+This leads us to our definition,
+$$\mathcal{L}\,G(x,x^\prime)=\delta(x-x^\prime).$$
+\subsection*{Finding A Green's Function}
+Determining $G(x,x^\prime)$ is a bit of a task.
+First, we integrate over an infinitessimal region either side of $x^\prime$ to get
+\begin{align*}
+ \int_{x^\prime-\epsilon}^{x^\prime + \epsilon}\,\dv{x}[p(x)\dv{G}{x}]+q(x)G(x,x^\prime)\,\dd{x} & = 1.
+\end{align*}
+By choosing $G(x,x^\prime)$ to be continuous, we get a discontinuity on the first derivatives
+\begin{equation*}
+ p(x^\prime)\qty[\dv{G(x+0,x^\prime)}{x} - \dv{G(x-0,x^\prime)}{x}] = 1.
+\end{equation*}
+
+We then consider the function away from (the already arbitrarily chosen) $x^\prime$, which needs to satisfy the homogeneous equation and the boundary conditions for the region considered.
+We choose
+\begin{align*}
+ G(x,x^\prime) & =
+ \begin{cases}
+  C_1(x^\prime)y_1(x) & \text{for } x< x^\prime \\
+  C_2(x^\prime)y_2(x) & \text{for } x> x^\prime
+ \end{cases}
+\end{align*}
+where the homogenous solutions are chosen such that they solve the boundary condition in that region.
+
+We then fix the constant functions $C_i(x^\prime)$ using these constraints, as
+\begin{align*}
+ C_1(x^\prime)y_1(x^\prime) - C_2(x^\prime)y_2(x^\prime)               & = 0                      \\
+ C_1(x^\prime)y^\prime_1(x^\prime) - C_2(x^\prime)y^\prime_2(x^\prime) & = \frac{1}{p(x^\prime)}.
+\end{align*}
+
+The last step is to construct the Green's function using the Heaviside function.
+At this point, it's worth drawing a diagram as it's a bit confusing.
+The $\Theta(x-x^\prime)$ term is non-zero if $x^\prime<x$ and vice versa, so
+\begin{equation*}
+ G(x,x^\prime) = C_1(x^\prime)y_1(x)\Theta(x^\prime - x) + C_2(x^\prime)y_2(x)\Theta(x - x^\prime).
+\end{equation*}
+
+This process changes subtly if it is an initial value problem.
+It being an initial value problem implies that $G(0,t)=\dv{t}\eval{G(t, t^\prime)}_{t=0}=0$, as for $t<t^\prime$ (when the impulse is applied) there is no effect (in a causal system).
+The Green's function will be different for a causal system to an anti-causal one.
+
+\section{Normal Forms}
+We can separate into other interesting forms by setting $$y(x)=v(x)u(x)$$ which we then chose $v(x)$ to be a known solution.
+We can then also choose
+\begin{align*}
+ v(x) & = \exp[-\frac{1}{2}\int^x P_1(x^\prime) \dd{x^\prime}] \\
+      & = W^{\nicefrac{1}{2}}(x)
+\end{align*}
+which is chosen to eliminate the $u^\prime$ term.
+The equation reduces in this form to
+$$u^{\prime\prime}(x) + Q(x)u(x) = 0$$ where $$Q(x) = p_0(x) - \frac{1}{2}p_1^\prime(x) - \frac{1}{4}p_1^2(x)$$
+which is the Normal or ``Schr\"odinger'' form.
+
+\chapter{One Thousand Coefficients and Variables (Power Series)}
+\section{Singularities}
+Like complex functions described earlier, differential equations have singularities of the same three types.
+We classify the point $x_0$ of an equation
+$$y^{\prime\prime} + p(x)y^\prime + q(x)y = 0$$
+as
+\begin{description}
+ \item [ordinary point] if $p(x_0)$ and $q(x_0)$ are both analytic;
+ \item [regular singularity] if $p(x_0)$ and/or $q(x_0)$ are not analytic, but $(x-x_0)p(x)$ and $(x-x_0)^2q(x)$ are analytic at $x=x_0$;
+ \item [irregular singularity] if $p(x_0)$ and/or $q(x_0)$ are not analytic, and $(x-x_0)p(x)$ and $(x-x_0)^2q(x)$ are not analytic at $x=x_0$.
+\end{description}
+We test the ``point at infinity'' with $z=\frac{1}{x}$ and let $z\rightarrow 0$.
+
+\section{Taylor-Maclaurin Series Expansions}
+For an ordinary point, we use the uniqueness of the power series to say
+$$ y(x) = \sum_{m=0}^\infty c_m(x-x_0)^m $$
+which gives a convergent series with radius of convergence up to the nearest singular point (by analytic continuation).
+Substitution and index adjustment will give a recursion relation, with which is then used to compare coefficients.
+
+\section{Frobenius Expansion about a Regular Singular Point}
+A regular singular point cannot be Taylor expanded about.
+We can try a Frobenius series though, which is in the form
+\begin{equation*}
+ y(x)= (x-x_0)^\alpha \sum_{m=0}^\infty c_m(x-x_0)^m \text{ for }c_0 \neq 0
+\end{equation*}
+The parameter is derived by comparing coefficents of the lowest powers of $x$ which gives an \emph{indicial equation} (or many), where we also use the definition that $c_0\neq 0$.
+This will often give you a quadratic equation.
+The nature of $\alpha_+ - \alpha_-$ dictates how many series solutions are found with this method.
+If it is an integer, there are two independent solutions.
+Otherwise, the second solution will be of the form
+$$ y_2(x) = \ln(x-x_0)y_1(x) + C(x)(x-x_0)^{\alpha}.$$
+
+\section{Expansion about irregular points}
+We begin by putting the differential equation into normal form ($y(x)=v(x)u(x)$ with $v(x)=\exp[-\frac{1}{2}\int^x P_1(x^\prime) \dd{x^\prime}]$).
+The normal form gives us lots of information, and can reasonably easily then be approximated (for example $\abs{x} \gg 1$).
+To expand about infinity, we do the usual trick of $z = \frac{1}{x}$ as $z\rightarrow 0$.
+
+\chapter{Unfogging the (special) Function}
+\section{Legendre Polynomials}
+Legendre's equation is
+\begin{equation*}
+ (1-x^2)y^{\prime\prime}(x) - 2xy^{\prime}(x) + n(n+1)y(x)=0
+\end{equation*}
+which we can use a Taylor-Maclaurin series to solve which gives us a recurrence relation
+\begin{equation*}
+ c_{m+2} = \frac{(m-n)(m+n+1)}{(m+2)(m+1)}c_m
+\end{equation*}
+and we note that for that for any integer $n$, either the even or odd series will be finite, which we call the Legendre polynomial.
+Solving the recurrence relation (through not inconsiderably faffery) shows that these solutions are
+\begin{align*}
+ P_n(x) & = \sum_{r=0}^{\left[\nicefrac{n}{2}\right]}\frac{(-1)^r(2n-2r)!}{2^n \,r!\, (n-r)!\, (n-2r)!}x^{n-2r} \\
+        & = \sum_{r=0}^{\left[\nicefrac{n}{2}\right]} \frac{(-1)^r}{2^n\,r!\,(n-r)!}\dv[n]{x}x^{2n-2r}          \\
+        & = \frac{1}{2^n\,n!}\dv[n]{x}\sum_{r=0}^{n}\frac{n!}{r!(n-r)!}(-1)^r(x^2)^{n-r}                         \\
+        & = \frac{1}{2^n\,n!}\dv[n]{x} (x^2 -1)^n.
+\end{align*}
+which is Rodrigues' formula.
+
+The integral formula gives us a further extension to this where
+\begin{align*}
+ P_n(x) & = \frac{1}{2^n}\frac{1}{2\pi i}\oint\frac{(t^2-1)^n}{(t-x)^{n+1}}\dd{t}
+\end{align*}
+which is \emph{Schl\"afli's integral representation}.
+
+\section{Generating functions}
+The generating function is useful for solving relations.
+We let
+$$F(h, x) = \sum^\infty_{n=0} h^n P_n(x)$$ where if we already know a closed integral for $P_n$.
+For the Legendre Polynomials, a rearrangement, the geometric series and a contour integral lead to the solution that
+$$F(h, x) = \frac{1}{\sqrt{1-2xh+h^2}}.$$
+
+From this expression, we can derive a recurrence relation (which is the main objective of the exercise).
+We differentiate with respect to $h$ to get
+\begin{align*}
+ \pdv{F}{h}            & = \sum_{n=0}^{\infty} nh^{n-1}P_n \\
+                       & = \frac{x-h}{1-2hx+h^2}F          \\
+ (1-2hx+h^2)\pdv{F}{h} & = (x-h)F
+\end{align*}
+with which we compare coefficients of $h$ (since that's the arbitrary variable).
+This gives us a generating function form of
+$$ P_n(x) = \frac{1}{n!} \eval{\pdv[n]{f(h,x)}{h}}_{h=0}. $$
+
+Usefully, we can work from here towards showing orthogonality.
+Legendre polynomials are orthogonal with relation
+$$\int_{-1}^{1}P_m(x)P_n(x)\dd{x}=\frac{2}{2n+1}\delta_{mn}.$$
+
+\section{Bessel Functions}
+Bessel's equation is
+$$x^2y^{\prime\prime} + xy^\prime +(x^2-n^2)y$$ which has a regular singular point at $x=0$ and thus is solved by the method of Frobenius.
+This gives us the Bessel functions (of the first kind)
+\begin{equation*}
+ J_n(x)= \sum_{p=0}^\infty \frac{(-1)^p}{p!\,(p+n)!}\qty(\frac{x}{2})^{n+2p}.
+\end{equation*}
+which is invariant under $n\rightarrow -n$ so we take
+\begin{equation*}
+ J_{-n}(x) = (-1)^nJ_n(x).
+\end{equation*}
+
+We expand the generating function in a Laurent series on $h$ as
+\begin{equation*}
+ F(x,h) = \sum_{n\in\mathbb{Z}} h^n J_n(x).
+\end{equation*}
+With some manipulation of factorials\footnote{which I'm currently unsure of}
+you can get two recurrence relations,
+\begin{align*}
+ J_{n-1} + J_{n+1} & = \frac{2n}{x}J_n \\
+ J_{n-1} - J_{n+1} & = 2 J_n^\prime
+\end{align*}
+which we can multiply through by $h^n$ and sum $\forall n \in \mathbb{Z}$ to get
+\begin{align*}
+ \qty(h + \frac{1}{h})F(x,h) & = \frac{2h}{x} \pdv{F(x,h)}{h}               \\
+ \implies\qquad F(x,h)       & =\phi(x)\exp(\frac{x}{2}\qty[h-\frac{1}{h}])
+\end{align*}
+Using the other recursion relation fixes $\phi(x)$ as a constant, which we usually choose as $\phi=1$.
+
+We can invert the generating function to get an expression for $J_n(x)$, which is typically tricky.
+We can use the residue theorem to produce
+\begin{equation*}
+ J_n(x)=\frac{1}{2\pi i}\oint\frac{F(t,x)}{t^{n+1}}\dd{t}
+\end{equation*}
+which evaluation gives us a complicated but approximately soluble integral, with the contour circling the origin.
+
+The Bessel function generalises with the help of $\Gamma$ functions, but the integral representation is the same, with a Hankel contour substituting for the closed contour.
+\part{A Beginner's Guide to Transformations}
+\chapter{Fourier Transforms}
+\section{Fourier Series}
+The complex Fourier series is defined as
+\begin{equation*}
+ f(x) = \sum_{n\in\mathbb{Z}} C_n\exp(\frac{in\pi x}{L})
+\end{equation*}
+with
+$$C_n = \frac{1}{2L}\int_{-L}^L f(x)\exp(-\frac{in\pi x}{L})$$ which is derived from the integral definition of the Kronecker $\delta_{ij}$.
+You can also define $\sin$ and $\cos$ series which are just the real/imaginary parts of the complex series, with limits chosen carefully to avoid discontinuity.
+
+\section{Fourier Transforms}
+We define
+$$\fourier{f(x)} = \int_{-\infty}^{\infty}f(x)e^{-ikx}\dd{x}$$ which is often denoted $\tilde{f}(k)$.
+The Fourier transform is well defined and uniformly convergent for all square-integrable functions (where $f(x)\rightarrow 0$ as $x\rightarrow\infty$).
+The inverse transform is
+\begin{equation*}
+ \inversefourier{g(k)} = \frac{1}{2\pi}\int_{-\infty}^{\infty}g(k)e^{ikx}\dd{k}.
+\end{equation*}
+There are many conventions on the usage of $e^{\pm ikx}$ and where the $\nicefrac{1}{2\pi}$ factor goes.
+This is entirely arbitrary, so long as they nicely pair off to $\fourier{\inversefourier{f(x)}}=f(x)$
+
+This generalises to $n$-dimensional spaces by
+\begin{align*}
+ \fourier{f(\vec{x})} & = \int_{\mathbb{R}^n} f(\vec{x})e^{i\vec{k}\vdot\vec{x}}\dd[n]{x} & \inversefourier{\tilde f(\vec{k})} & = \frac{1}{(2\pi)^n}\int_{\mathbb{R}^n} \tilde f(\vec{k}) e^{i\vec{k}\vdot\vec{x}} \dd[n]{k}
+\end{align*}
+\subsection{General Properties}
+We can derive by integration by parts that
+\begin{equation*}
+ \dv[n]{x}\fourier{f(x)} = (ik)^n\fourier{f(x)}
+\end{equation*} which is really useful.
+
+A Gaussian Fourier transforms to another Gaussian of inverse width in 3-D.
+This gives us (among other things) the Heisenberg Uncertainty Principle.
+
+\section{Convolutions}
+The convolution of two functions $f_1(x)$ and $f_2(x)$ is defined as
+\begin{align*}
+ (f_1 \ast  f_2)(x) = \int_{-\infty}^\infty f_1(y)f_2(x-y)\dd{y}.
+\end{align*}
+
+We can also show the convolution theorem,
+\begin{align*}
+ \fourier{f_1 \ast  f_2} & = \fourier{f_1}\fourier{f_2}        \\
+ \fourier{f_1f_2}        & = \fourier{f_1} \ast \fourier{f_2}.
+\end{align*}
+
+\section{Solving ODEs with Fourier Transformations}
+Due to the differentiation property, we can often solve ODEs much easier with a Fourier transform.
+Fundamentally, for an ODE of the form $\mathcal{L}y=f(x)$, we do
+\begin{align*}
+ \mathcal{L}\tilde y (\omega) & =\tilde f(\omega)\intertext{which gives us a algebraic expression}
+ A(\omega)\tilde{y}(\omega)   & =\tilde{f}(\omega)\intertext{which you can then recognise as }
+ \tilde{G}(\omega)            & = \frac{1}{A(\omega)}\intertext{giving the convolution}
+ y(t)                         & = \int_{-\infty}^\infty G(t-t^\prime)f(t)\dd{t}.
+\end{align*}
+Clearly, the difficult bit here is inverting the Green's function.
+We also have to assume that $\lim_{t\rightarrow\infty}G(t)=0$.
+We can combine Jordan's Lemma with contour integration and the residue theorem.
+
+If we have inhomogeneous boundary conditions, we have to adjust our expression for $\tilde{y}(\omega)$ so that we aren't at any point dividing by zero.
+This is done by adding delta functions at the boundaries
+such that
+$$\tilde{y}(\omega) = \frac{1}{A}\tilde{f}(\omega) + 2\pi A\delta(\omega-\omega_+)+2\pi B\delta(\omega-\omega_-).$$
+
+\chapter{Laplace Transformations}
+The Laplace transform of a function is defined as
+$$\laplace{f(t)}=F(s)=\int_{-\infty}^\infty f(t)e^{-st}\dd{t}$$
+where $s$ is ``sufficiently large'' and $t>0$ for the sake of convergence.
+
+The inverse transform is not quite as clear cut as in the Fourier case.
+It is given by the Bromwich Inversion Formula
+\begin{equation*}
+ f(t) = \frac{1}{2\pi i}\int_{\gamma-i\infty}^{\gamma+i\infty}F(s)e^{st}\dd{s}
+\end{equation*} where $\gamma$ is chosen to be to the right of all of the ``interesting'' points in the function.
+This allows us to find the inverse using the residue theorem.
+\section{Properties}
+Similarly to the Fourier transform, the Laplace transform has convenient differentiation properties, with \begin{align*}
+ \laplace{f^{\prime}(t)}       & = sF(s) - f(0)                  \\
+ \laplace{f^{\prime\prime}(t)} & = s^2F(s) - sf(0) - f^\prime(0) \\
+ \dv{s}\laplace{f(t)}          & = -\laplace{tf(t)}.
+\end{align*}
+
+This allows us to solve initial value problems.
+We simply need values for $f(0)$ and $f^\prime(0)$.
+
+It also follows the convolution theorem the same as Fourier Transforms, $$\laplace{f*g}=\laplace{f}\laplace{g}.$$
+
+In the large $t$ limit, the behaviour of a function to be inverse transformed is given by the pole closest to the $\gamma$ contour.
+If there's a branch point, a Hankel-like contour is used.
+If a branch point is the closest to the contour, we expand as an asymptotic series, then invert term by term.
+
+\chapter{Other Transforms}
+Many other transforms are possible, based on some kernel.
+\begin{center}
+ \begin{tabular}{lll}\toprule
+  Transform         & Forward                                          & Inverse                                                                       \\\midrule
+  Fourier Transform & $g(k)=\int_{-\infty}^{\infty}f(x)e^{-ikx}\dd{x}$ & $f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}g(k)e^{ikx}\dd{k}$                 \\
+  Laplace Transform & $F(s)=\int_0^\infty f(t)e^{-st}\dd{t}$           & $f(t)=\frac{1}{2\pi i}\int_{\gamma-i\infty}^{\gamma+i\infty}F(s)e^{st}\dd{s}$ \\
+  Mellin Transform  & $\phi(z)=\int_0^\infty f(t)t^{z-1}\dd{t}$        & $f(t) = \frac{1}{2\pi i}\int_{c-i\infty}^{c+i\infty}\phi(z)t^{-z}\dd{z}$      \\\bottomrule
+ \end{tabular}
+\end{center}
+
+\section{Generalised Integral Transform Method --- Laplace's (other) Method}
+We develop a generalised integral transform method to get
+\begin{enumerate}
+ \item a systematic way to solve linear ODEs
+ \item analytic continuation automatically incorporated.
+\end{enumerate}
+It forms a bridge between differential equations and operators in the Hilbert space.
+
+We form a linear ODE of polynomial coefficients in the form
+\begin{equation*}
+ \mathcal{L}_z u(z) = 0
+\end{equation*} and seek solutions of the form
+\begin{align*}
+ u(z) & = \int_C K(z,s) v(s) \dd{s}
+\end{align*} for some kernel $K(z,s)$ and contour $C$.
+
+Examples of useful kernels include
+\begin{description}
+ \item [Fourier] $e^{izs}$,
+ \item [Laplace] $e^{zs}$,
+ \item [Euler] $(s-z)^\mu$,
+ \item [Mellin] $z^{-s}$,
+ \item [Bessel] $sJ_n(zs)$ \ldots
+\end{description}
+
+Now we can start on the general method.
+We choose $K(z,s)$ such that there exists a particularly simple differential operator $M_s$ with
+\begin{equation*}
+ \mathcal{L}_z K(z,s) = M_s K(z,s).
+\end{equation*}
+We can show this schematically.
+We start with
+\begin{align*}
+ \mathcal{L}_z u(z) & = \mathcal{L}_z\int_C K(z,s)v(s)\dd{s}                                                 \\
+                    & = \int_C \mathcal{L}_z K (z,s)v(s)\dd{s}                                               \\
+                    & = \int_C \qty[M_s K(z,s)]v(s) \dd{s}\intertext{which by integration by parts gives us}
+                    & = \qty[R(z,s)]_C - \int_C K(z,s)M_s^\dagger v(s) \dd{s}                                \\
+                    & = 0
+\end{align*}
+by the original differential operator and that $M_s\{K(z,s)v(s)\} = [M_s K]v + K(M_s^\dagger v)$.
+
+The `game' here is to get rid of the $z$-dependence by having $M_s$ (or $M_s^\dagger$) acting on $v(s)$ alone.
+With this in mind, we choose $v(s)$ such that it soves $M_s^\dagger v(s)= 0$ and choose the contour $C$ such that $\eval{R(z,s)}_C$ vanishes.
+This makes a lot more sense in practice!
+
+\part{The Dark Forces: A Guide to Partial Differential Equations}
+\chapter{Classification of PDEs}
+A first order PDE is in the form
+\begin{equation*}
+ F(x,y,u,u_x,u_y)=0
+\end{equation*}
+where $u_x=\pdv{u}{x}$.
+This generalises to second order with
+\begin{equation*}
+ F(x,y,u,u_x,u_y,u_{xx},u_{xy},u_{yy})=0.
+\end{equation*}
+A linear PDE is linear in $u$ and all its derivatives, but not necessarily in $x$ or $y$.
+
+In general, the solution of a PDE is an arbitrary function, and the ``constants of integration'' from ODE theory become ``functions of integration'' in all but the integrated over variables.
+We find these through imposition of boundary conditions.
+
+Considering the first order PDE
+\begin{equation*}
+ au_x + b u_y = 0
+\end{equation*}
+for $a$, $b$ constant, we can interpret this as a directional derivative
+\begin{equation*}
+ \qty(\pmqty{a\\b} \vdot \grad)u = 0
+\end{equation*} which means that along lines parallel to the direction the function is constant --- these are referred to as characteristics.
+For this first order PDE the characteristics are along the lines defined by
+$$bx-ay=m$$ which makes the the final general solution of the form $u=f(bx-ay)$.
+\chapter{Second Order Partial Differential Equations}
+\begin{table}[htbp]
+ \centering
+ \begin{tabular}{l c c}
+  \toprule
+  Equation      & 4D Version                                                             & 2D Version                                                   \\
+  \midrule
+  Wave          & $\laplacian u - \frac{1}{c^2}\pdv[2]{u}{x}=0$                          & $u_{xx} - \frac{1}{c^2}u_{tt}=0$                             \\
+  Laplace       & $\laplacian u = 0$                                                     & $u_{xx} + u_{yy} = 0$                                        \\
+  Diffusion     & $\laplacian u - \frac{1}{\kappa} u_t = 0$                              & $u_{xx} - \frac{1}{\kappa} u_t = 0 $                         \\
+  Schr\"odinger & $\qty(-i\hslash \pdv{t} + \frac{\hslash^2}{2m}\laplacian + V)\psi = 0$ & $\qty(ih\pdv{t} + \frac{\hslash^2}{2m}\pdv[2]{x} + V)\psi=0$ \\\bottomrule
+ \end{tabular}
+ \caption{Some homogeneous partial differential equations}\label{tbl:homogenouspde}
+\end{table}
+
+Shown in table \ref{tbl:homogenouspde} are some important examples of homogeneous PDEs in physics.
+We can also define these as inhomogeneous versions.
+
+A general class of second order PDE in the form $$A(x,y)u_{xx} + 2B(x,y)u_{xy} + C(x,y)u_{yy} = D(x,y,u_x,u_y)$$
+requires more than a point to define the boundary conditions, so we define a boundary \emph{function} over some curve $\Gamma$.
+We can form a linear system by considering the differentials $\frac{\partial^2 u}{\partial x \partial s}$ and $\frac{\partial^2 u}{\partial y \partial s}$, which we relate with the parameterisation of $\Gamma$.
+
+On the characteristics, the linear system is not invertable.
+This is how they are defined.
+
+
+
+\section{Normal Forms}
+We can change variables with impunity in our PDEs.
+A good choice is to change to `normal' co-ordinates where the cross term $\frac{\partial^2 u}{\partial x \partial y}$ vanishes.
+
+From this process, we get the forms shown in table \ref{tbl:normaltransformations}, where $$\alpha_\pm(x,y) = y - \frac{B\pm\sqrt{B^2 - AC}}{A}x$$ which should be constant.
+The number and type of each characteristic will show display which type of form should be used.
+
+\begin{table}[htb]
+ \centering
+ \begin{tabular}{lllll}
+  \toprule
+  Class      & \multicolumn{2}{c}{Change of Variables} & New Equation                        & Type                                                           \\
+  \midrule
+  Elliptic   & $v=\frac{1}{2}(\alpha_+ + \alpha_-)$    & $w=-\frac{i}{2}(\alpha_+-\alpha_-)$ & $\pdv[2]{u}{v} + \pdv[2]{u}{w}=\tilde{D}$ & ``Laplace-like''   \\
+  Hyperbolic & $v=\frac{1}{2}(\alpha_+ + \alpha_-)$    & $w=\frac{1}{2}(\alpha_+-\alpha_-)$  & $\pdv[2]{u}{v} - \pdv[2]{u}{w}=\tilde{D}$ & ``Wavelike''       \\
+  Parabolic  & $v=\alpha$                              & $w=x$                               & $\pdv[2]{u}{w}=\tilde{D}$                 & ``Diffusion-like'' \\\bottomrule
+ \end{tabular}
+ \caption{Normal Transformations of Differential Equations}\label{tbl:normaltransformations}
+\end{table}
+
+\section{Boundary Conditions}
+There are many types of boundary conditions
+\begin{description}
+ \item [Dirichlet] Defining on a curve the value of the function ($u$)
+ \item [Neumann] Defining on a curve the first derivative of the function ($\pdv{u}{n}$)
+ \item [Cauchy] Defining $u$ and $\pdv{u}{n}$ on $\Gamma$.
+\end{description}
+For hyperbolic equations, we use Cauchy conditions, for elliptics, we have tu use Dirichlet or Neumann on a closed curve, and Parabolics require that you define one or other of Dirichlet or Neumann, but not both.
+
+
+\chapter{The Wave Equation}
+The simplest hyperbolic equation is the wave equations$$u_{xx}-\frac{1}{c^2}u_tt=0$$ for which the characteristics are given by
+$$\alpha_\pm = x \pm ct$$ (which is where the concept of `preserving the interval' comes from).
+The general solution for the wave equation is
+$$u(x,t) = f(x-ct) + g(x+ct)$$ which shows the propagation along the characteristic.
+
+We can also solve it using the Fourier Transform, for
+$$F(k,t) = \int_{-\infty}^{\infty} u(x,t) e^{-ikx} \dd{x}$$ which gives
+\begin{align*}
+ -k^2 F(k,t)            & = \frac{1}{c^2}\pdv[2]{F}        \\
+ \implies \qquad F(k,t) & = A(k)\cos(kct) + B(k)\sin(kct).
+\end{align*}
+
+The transformed basis gives our boundary conditions as
+\begin{align*}
+ u(x,0)               & = a(x)         & u_t(x,0) & = b(x)         \\
+ \implies\quad F(k,0) & = \tilde{a}(k) & F_t(k,0) & = \tilde{b}(k) \\
+                      & = A(k)         &          & = kcB(k)
+\end{align*}
+Thus
+$$ F(k,t) = \tilde{a}(k)\cos(kct)+ \frac{\tilde{b}}{kc}\sin(kct). $$
+
+Inverse transforming, we notice a possible application of the convolution theorem.
+This gives
+$$ u(x,t) = \frac{1}{2}[a(x - ct) + a(x+ct)] + \frac{1}{2c} \int_{x-ct}^{x+ct} b(x^\prime)\dd{x^\prime} $$
+
+\section{Dealing with inhomogeneity}
+The define the `D'Alembertian'
+$$\square = \laplacian - \frac{1}{c^2}\pdv[2]{t}$$ which means that
+\begin{align*}
+ \square u(x,t)                                 & = f(\vec{x},t)\intertext{is the inhomogeneous wave equation.
+We define the multivariate Green's function with}
+ \square G(\vec{x},t; \vec{x}^\prime, t^\prime) & = \delta(\vec{x} - \vec{x}^\prime) \delta(t-t^\prime)
+\end{align*}
+which we can find via the Fourier Transform method.
+In Fourier space
+\begin{align*}
+ \fourier{G(\vec{x},t)}                    & = \tilde{G}(\vec{k},w)                                                      \\
+                                           & = \int \dd[3]{x}\int \dd{t} G(\vec{x},t)e^{-(\vec{k}\vdot\vec{x}-\omega t)} \\
+ \implies \qquad \tilde{G}(\vec{k},\omega) & = \frac{c^2}{\omega^2 - k^2c^2}
+\end{align*} which we must now invert.
+
+This is not a trivial task, but we face it with confidence and the knowledge which we've gained over the previous sections.
+We notice that at some point a contour integral will appear, with two poles at $\omega=\pm kc$.
+We must choose which half plane we close the contour in.
+This is akin to choosing the causal or anti-causal solution, radiating forwards or backwards in the $t$ axis.
+The choices of which poles to include should be clear from the boundary conditions.
+
+A lot of hard work later, we get
+\begin{equation}
+ u_p(\vec{x},t) = -\frac{1}{4\pi}\int \frac{f(\vec{x}^\prime), t- \frac{1}{c}\abs{\vec{x}-\vec{x}^\prime}}{\abs{\vec{x}-\vec{x}^\prime}}\dd[3]{x^\prime}.
+\end{equation}
+
+\chapter{The Diffusion Equation}
+The canonical example of a parabolic equation, in one spacial dimension the equation reads
+$$\pdv[2]{u}{x} - \frac{1}{D}\pdv{u}{t}=0$$
+where $D$ is the diffusion constant.
+
+There are two types of boundary conditions for these equations,
+\begin{enumerate}
+ \item we specify $u(x,t_0)$ (usually $t_0 = 0$) for all $x\in \mathbb{R}$
+ \item we specify $u(x,t_0)$ over some range beginning or ending at finite $x$ (e.g.~$x\in[a,b]$).
+Then, in addition, we specify $u(a,t)$ or $u^\prime (a,t)$ on the finite $x$ boundary.
+\end{enumerate}
+
+For the infinite domain, we solve this the same way as we have in the past, with Fourier Transform to find a Green's function.
+
+For a finite $x$ boundary, we consider a semi-infinite rod.
+We give the boundary conditions as $u(x,0)$ given for $x>0$ and $u(0,t)=f(t)$, otherwise known as knowing the initial state of all of the rod, and how the end of the rod changes (often this is constant).
+
+We can do a $\sin$ or $\cos$ transform as in the previous styles with the Fourier, or use a Laplace transform.
+This leads to a nontrivial Laplace inversion, but it is useful to note that $$\laplace{\erfc\qty(\frac{a}{2\sqrt{t}})} = \frac{\exp(-a\sqrt s)}{s}$$
+and that the final solution is an asymptotic series
+$$T(x,t)\sim T_0 \qty[1-\frac{x}{\sqrt{\pi D t^{\nicefrac{1}{2}}}} + \cdots].$$
+
+\chapter{Laplace's and Poisson's Equations}
+For our canonical elliptic operator, we consider Laplace's Equation
+\begin{align*}
+ \laplacian u(\vec{x}) & = 0 \intertext{and the inhomogeneous equivalent}
+ \laplacian u(\vec{x}) & = \rho(\vec{x}).
+\end{align*} for both of which we must define closed boundary conditions in either a Dirichlet or Neumann style.
+
+\section{Homogeneous Conditions}
+In the homogeneous form, we mean $u(\vec{x})=0$ when $\vec{x}\in S$ where $S$ is a closed curve in $\mathbb{R}^3$.
+We construct, as usual, a Green's function, which we assume to have the same boundary conditions as $u$.
+This gives us
+$$u(\vec{x}) = \int_V G(\vec{x},\vec{x}^\prime)\rho(\vec{x}^\prime)\dd{V^\prime}$$ which can be solved in the usual electrostatics method using the divergence theorem for $G(\vec{x}, \vec{x}^\prime)$.
+
+The solution in this case (spherical integral for $\lim_{\abs{\vec{x}}\rightarrow \infty}G(\vec{x},\vec{x}^\prime) = 0$)
+\begin{align*}
+ G(\vec{x},\vec{x}^\prime) & = -\frac{1}{4\pi \abs{\vec{x}-\vec{x}^\prime}}
+\end{align*}
+which is known as the `fundamental' solution of the Laplacian.
+
+\section{Inhomogeneous Boundary Conditions}
+Solving this is less trivial (though more general, and includes the homogenous case).
+We use Green's Theorem
+\begin{align*}
+ \int_V\qty(\phi \laplacian \psi - \psi \laplacian \phi)\dd{V} & = \int_S \qty(\phi \grad \psi - \psi \grad \phi)\vdot \hat{n}\dd{S} \\
+ \implies \quad \int_V \quad[u(\vec{x})\laplacian G(\vec{x},\vec{x}^\prime) - G(\vec{x},\vec{x}^\prime)\laplacian u(\vec{x})]\dd{V}  \\= \int_S [u(\vec{x})\pdv{n}G(\vec{x},\vec{x}^\prime)
+                                                               & - G(\vec{x},\vec{x}^\prime) \pdv{u(\vec{x})}{n}]\dd{V}
+\end{align*}
+which we rearrange, with an application of the definition of the Green's function and of Shakespeare's Theorem to get
+\begin{equation*}
+ u(\vec{x}) = \int_V G(\vec{x},\vec{x}^\prime)\rho(\vec{x}^\prime)\dd{V^\prime} + \int_S \qty[u(\vec{x})\pdv{n}G(\vec{x},\vec{x}^\prime) - G(\vec{x},\vec{x}^\prime) \pdv{u(\vec{x})}{n}]\dd{S^\prime}
+\end{equation*}
+for which the two forms of boundary conditions are catered for with the two terms in the surface integral.
+
+In general, the Green's function for these will be in the form
+$$G(\vec{x},\vec{x}^\prime) = F(\vec{x},\vec{x}^\prime) + H(\vec{x},\vec{x}^\prime)$$ where $F(\vec{x},\vec{x}^\prime)$ is the fundamental solution found previously.
+
+\end{document}
