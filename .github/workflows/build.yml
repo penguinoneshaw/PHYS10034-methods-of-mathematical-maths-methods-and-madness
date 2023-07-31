@@ -1,0 +1,27 @@
+name: build-document
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "**.tex"
+  workflow_dispatch:
+
+jobs:
+  build-document:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/render-latex
+        id: render-latex
+        with:
+          root-file: Methods-of-Mathematical-Methods-and-Equations
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          title: "${{ env.GITHUB_SHA }}"
+          files: |
+            "${{ steps.render-latex.outputs.output-dir }}/*.pdf"

@@ -1,0 +1,15 @@
+name: render-latex
+description: Renders a LaTeX file with XeLaTeX
+inputs:
+  root-file:
+    required: true
+    description: The root file
+outputs:
+  output-dir:
+    description: The directory the latexmk output is directed to
+runs:
+  using: docker
+  image: "Dockerfile"
+  entrypoint: /entrypoint.sh
+  args:
+    - "${{ inputs.root-file }}"
