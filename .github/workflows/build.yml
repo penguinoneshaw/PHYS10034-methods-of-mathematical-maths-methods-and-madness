@@ -1,8 +1,6 @@
 name: build-document
 on:
   push:
-    branches:
-      - "main"
     paths:
       - "**.tex"
   workflow_dispatch:
@@ -17,11 +15,24 @@ jobs:
         id: render-latex
         with:
           root-file: Methods-of-Mathematical-Methods-and-Equations
-
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - uses: actions/upload-artifact@v3
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          name: final-document
+          path: "${{ steps.render-latex.outputs.output-dir }}/*.pdf"
+  create-release:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name }} == main
+    permissions:
+      contents: write
+    needs:
+      - build-document
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: final-document
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "*.pdf"
           prerelease: true
-          title: "${{ env.GITHUB_SHA }}"
-          files: |
-            "${{ steps.render-latex.outputs.output-dir }}/*.pdf"
+          name: "${{ github.sha }}"
