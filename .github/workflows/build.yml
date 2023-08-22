@@ -1,8 +1,11 @@
 name: build-document
 on:
   push:
+    tags:
+      - "v*"
     paths:
       - "**.tex"
+
   workflow_dispatch:
 
 jobs:
@@ -21,7 +24,7 @@ jobs:
           path: "${{ steps.render-latex.outputs.output-dir }}/*.pdf"
   create-release:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name }} == main
+    if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
     needs:
