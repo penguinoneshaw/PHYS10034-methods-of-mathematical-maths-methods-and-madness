@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/render-latex
+      - uses: actions/checkout@v4
+      - uses: penguinoneshaw/latex-render@v1
         id: render-latex
         with:
           root-file: Methods-of-Mathematical-Methods-and-Equations
